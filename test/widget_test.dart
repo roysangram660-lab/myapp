@@ -1,3 +1,7 @@
+// and then add a description for search engines.
+//
+
+// In order to generate income, you must integrate a mobile ad SDK.
 // This is a basic Flutter widget test.
 //
 // To perform an interaction with a widget in your test, use the WidgetTester
