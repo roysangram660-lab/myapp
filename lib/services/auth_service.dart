@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:myapp/services/user_service.dart';
@@ -13,8 +14,8 @@ class AuthService {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       return result.user;
-    } catch (e) {
-      print(e.toString());
+    } catch (e, s) {
+      developer.log('Sign in with email failed', name: 'AuthService', error: e, stackTrace: s);
       return null;
     }
   }
@@ -27,25 +28,40 @@ class AuthService {
         await _userService.createUser(user);
       }
       return user;
-    } catch (e) {
-      print(e.toString());
+    } catch (e, s) {
+      developer.log('Sign up with email failed', name: 'AuthService', error: e, stackTrace: s);
       return null;
     }
   }
 
   Future<User?> signInWithGoogle() async {
     try {
+      // The web client ID for your Firebase project.
+      const String webClientId = "YOUR_WEB_CLIENT_ID.apps.googleusercontent.com";
+      
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
       if (googleUser == null) {
-        return null; // The user canceled the sign-in
+        // The user canceled the sign-in
+        return null;
       }
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
+
+      // This should not happen, but it's a good practice to check.
+      if (googleAuth == null) {
+        developer.log('Google Sign-In authentication details are null', name: 'AuthService');
+        return null;
+      }
+
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
+
       UserCredential result = await _auth.signInWithCredential(credential);
       User? user = result.user;
+
       if (user != null) {
         final userDoc = await _userService.getUser(user.uid);
         if (!userDoc.exists) {
@@ -53,11 +69,12 @@ class AuthService {
         }
       }
       return user;
-    } catch (e) {
-      print(e.toString());
+    } catch (e, s) {
+      developer.log('Sign in with Google failed', name: 'AuthService', error: e, stackTrace: s);
       return null;
     }
   }
+
 
   Future<User?> signInAnonymously() async {
     try {
@@ -67,8 +84,8 @@ class AuthService {
         await _userService.createUser(user);
       }
       return user;
-    } catch (e) {
-      print(e.toString());
+    } catch (e, s) {
+      developer.log('Sign in anonymously failed', name: 'AuthService', error: e, stackTrace: s);
       return null;
     }
   }
