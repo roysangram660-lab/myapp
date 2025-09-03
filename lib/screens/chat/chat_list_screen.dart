@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:myapp/services/auth_service.dart';
-import 'package:myapp/services/chat_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatListScreen extends StatelessWidget {
@@ -11,8 +10,7 @@ class ChatListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
-    final chatService = Provider.of<ChatService>(context);
-    final currentUser = authService.getCurrentUser();
+    final currentUser = authService.currentUser;
 
     return Scaffold(
       appBar: AppBar(
@@ -67,7 +65,7 @@ class ChatListScreen extends StatelessWidget {
                     title: Text(otherUser['displayName'] ?? 'User'),
                     subtitle: const Text('Last message...'), // Placeholder
                     onTap: () {
-                      context.go('/home/chats/$chatRoomId');
+                      context.go('/chats/$chatRoomId');
                     },
                   );
                 },
@@ -78,7 +76,7 @@ class ChatListScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.go('/home/chats/new');
+          context.go('/chats/new');
         },
         child: const Icon(Icons.add),
       ),

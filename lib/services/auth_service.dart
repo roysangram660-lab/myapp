@@ -9,6 +9,7 @@ class AuthService {
   final UserService _userService = UserService();
 
   Stream<User?> get user => _auth.authStateChanges();
+  User? get currentUser => _auth.currentUser;
 
   Future<User?> signInWithEmailAndPassword(String email, String password) async {
     try {
@@ -36,31 +37,19 @@ class AuthService {
 
   Future<User?> signInWithGoogle() async {
     try {
-      // The web client ID for your Firebase project.
-      const String webClientId = "YOUR_WEB_CLIENT_ID.apps.googleusercontent.com";
-      
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-
       if (googleUser == null) {
-        // The user canceled the sign-in
-        return null;
+        return null; // User canceled the sign-in
       }
 
-      final GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
-
-      // This should not happen, but it's a good practice to check.
-      if (googleAuth == null) {
-        developer.log('Google Sign-In authentication details are null', name: 'AuthService');
-        return null;
-      }
-
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      UserCredential result = await _auth.signInWithCredential(credential);
-      User? user = result.user;
+      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+      final User? user = userCredential.user;
 
       if (user != null) {
         final userDoc = await _userService.getUser(user.uid);
@@ -68,13 +57,13 @@ class AuthService {
           await _userService.createUser(user);
         }
       }
+
       return user;
     } catch (e, s) {
       developer.log('Sign in with Google failed', name: 'AuthService', error: e, stackTrace: s);
       return null;
     }
   }
-
 
   Future<User?> signInAnonymously() async {
     try {
@@ -93,9 +82,5 @@ class AuthService {
   Future<void> signOut() async {
     await _googleSignIn.signOut();
     await _auth.signOut();
-  }
-
-  User? getCurrentUser() {
-    return _auth.currentUser;
   }
 }

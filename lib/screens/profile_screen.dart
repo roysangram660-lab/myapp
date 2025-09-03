@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -43,8 +44,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final imageRef = storageRef.child('users/$userId/images/$fileName');
       await imageRef.putFile(image);
       return await imageRef.getDownloadURL();
-    } catch (e) {
-      print(e.toString());
+    } catch (e, s) {
+      developer.log('Image upload failed', name: 'ProfileScreen', error: e, stackTrace: s);
       return null;
     }
   }
@@ -53,7 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
     final userService = Provider.of<UserService>(context, listen: false);
-    final user = authService.getCurrentUser()!;
+    final user = authService.currentUser!;
 
     return Scaffold(
       appBar: AppBar(
@@ -125,12 +126,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         }
 
                         await userService.updateUser(user.uid, updateData);
-
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Profile updated!')),
-                          );
-                        }
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Profile updated!')),
+                        );
                       }
                     },
                     child: const Text('Update Profile'),

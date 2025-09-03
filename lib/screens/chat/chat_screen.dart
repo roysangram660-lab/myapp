@@ -29,8 +29,11 @@ class _ChatScreenState extends State<ChatScreen> {
         .collection('chats')
         .doc(widget.chatRoomId)
         .get();
+
+    if (!mounted) return;
+
     final List<dynamic> users = chatDoc['users'];
-    final currentUser = context.read<AuthService>().getCurrentUser();
+    final currentUser = context.read<AuthService>().currentUser;
     final otherUserId = users.firstWhere((id) => id != currentUser!.uid);
 
     final userDoc = await FirebaseFirestore.instance
@@ -38,17 +41,19 @@ class _ChatScreenState extends State<ChatScreen> {
         .doc(otherUserId)
         .get();
 
-    setState(() {
-      _otherUserName = userDoc['displayName'];
-      _otherUserPhotoUrl = userDoc['photoURL'];
-    });
+    if (mounted) {
+      setState(() {
+        _otherUserName = userDoc['displayName'];
+        _otherUserPhotoUrl = userDoc['photoURL'];
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final chatService = Provider.of<ChatService>(context);
     final authService = Provider.of<AuthService>(context);
-    final currentUser = authService.getCurrentUser();
+    final currentUser = authService.currentUser;
 
     return Scaffold(
       appBar: AppBar(
@@ -121,12 +126,12 @@ class _ChatScreenState extends State<ChatScreen> {
                       hintText: 'Enter a message...',
                       border: OutlineInputBorder(),
                     ),
-                    onSubmitted: (text) => _sendMessage(chatService, currentUser!.uid),
+                    onSubmitted: (text) => _sendMessage(chatService),
                   ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.send),
-                  onPressed: () => _sendMessage(chatService, currentUser!.uid),
+                  onPressed: () => _sendMessage(chatService),
                 ),
               ],
             ),
@@ -136,9 +141,9 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void _sendMessage(ChatService chatService, String senderId) {
+  void _sendMessage(ChatService chatService) {
     if (_messageController.text.isNotEmpty) {
-      chatService.sendMessage(widget.chatRoomId, _messageController.text, senderId);
+      chatService.sendMessage(widget.chatRoomId, _messageController.text);
       _messageController.clear();
     }
   }

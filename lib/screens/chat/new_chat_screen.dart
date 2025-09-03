@@ -5,14 +5,19 @@ import 'package:provider/provider.dart';
 import 'package:myapp/services/auth_service.dart';
 import 'package:myapp/services/chat_service.dart';
 
-class NewChatScreen extends StatelessWidget {
+class NewChatScreen extends StatefulWidget {
   const NewChatScreen({super.key});
 
+  @override
+  State<NewChatScreen> createState() => _NewChatScreenState();
+}
+
+class _NewChatScreenState extends State<NewChatScreen> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context, listen: false);
     final chatService = Provider.of<ChatService>(context, listen: false);
-    final currentUser = authService.getCurrentUser()!;
+    final currentUser = authService.currentUser!;
 
     return Scaffold(
       appBar: AppBar(
@@ -46,7 +51,8 @@ class NewChatScreen extends StatelessWidget {
                 title: Text(user['displayName'] ?? 'User'),
                 onTap: () async {
                   final chatRoomId = await chatService.createChatRoom([currentUser.uid, user.id]);
-                  context.go('/home/chats/$chatRoomId');
+                  if (!mounted) return;
+                  context.go('/chats/$chatRoomId');
                 },
               );
             },

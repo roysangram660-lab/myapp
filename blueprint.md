@@ -1,27 +1,42 @@
-
 # UnityLink Blueprint
 
 ## Overview
 
-UnityLink is a Flutter-based mobile application designed to foster social connections and community engagement. It provides a seamless and intuitive user experience, enabling users to interact through various features such as real-time chat, video calls, and issue-specific discussion rooms. The app is built with Firebase, ensuring robust backend services for authentication, data storage, and real-time communication.
+This document outlines the architecture and features of UnityLink, a Flutter application designed for real-time communication and community engagement. The app is built with a focus on modern design, robust functionality, and a seamless user experience, all powered by Firebase and Google's Gemini AI.
 
-## Key Features
+## Implemented Features & Design
 
-- **Authentication:** Secure user authentication with options for email/password, Google Sign-In, and anonymous access.
-- **User Profiles:** Personalized user profiles with customizable display names and profile pictures.
-- **Real-time Chat:** Instant messaging functionality for one-on-one and group conversations.
-- **Video Calling:** High-quality video call capabilities for face-to-face interactions.
-- **Issue Rooms:** Dedicated spaces for users to discuss specific topics and collaborate on solutions.
-- **Discover:** A feature to explore and connect with other users and communities within the app.
+### Core Architecture
 
-## Design and Theming
+*   **State Management:** Utilizes the `provider` package for robust state management and dependency injection, with `ChangeNotifier` for theme toggling and `StreamProvider` for real-time authentication state.
+*   **Navigation:** Employs `go_router` for declarative, URL-based navigation, complete with authentication-aware redirects to protect routes.
+*   **Services:** A modular service layer abstracts core functionalities:
+    *   `AuthService`: Handles all user authentication, including email/password and Google Sign-In.
+    *   `UserService`: Manages user data and profiles in Firestore.
+    *   `ChatService`: Powers the real-time chat functionality, including one-on-one chats and community rooms.
+    *   `GeminiService`: Integrates with the Gemini AI for intelligent features.
+*   **Error Handling:** Uses `dart:developer` for structured logging to enable effective debugging.
 
-The app follows Material Design 3 principles, with a consistent and visually appealing theme. It supports both light and dark modes, and the theme is easily customizable through a centralized `ThemeData` object. The typography is handled by the `google_fonts` package, providing a wide range of font options.
+### User Interface & Experience
 
-## Architecture
+*   **Theming:** A sophisticated theme system supports both light and dark modes, with custom typography from `google_fonts` and a polished, modern aesthetic.
+*   **Home Screen:** A central hub providing access to all major features: chats, calls, community rooms, user profiles, and the Gemini AI assistant.
+*   **Authentication Flow:** A seamless and secure authentication process with options for email/password and Google Sign-In.
+*   **Real-time Chat:** Users can engage in one-on-one conversations with other users, with a user list for initiating new chats.
+*   **Community Issue Rooms:** A new feature allowing users to create, join, and participate in topic-based discussion rooms.
+    *   **Room Directory:** A screen (`CommunityRoomsScreen`) that lists all available community rooms.
+    *   **Room Creation:** A dedicated screen (`NewCommunityRoomScreen`) for creating new rooms with a specified name.
+    *   **Real-time Chat:** A chat screen (`CommunityRoomScreen`) for real-time messaging within a specific room.
+*   **Profile Management:** A dedicated profile screen allows users to update their display name and profile picture, with image uploads handled by Firebase Storage.
 
-UnityLink is built using a layered architecture, with a clear separation of concerns between the UI, business logic, and data layers. It utilizes the `provider` package for state management and dependency injection, ensuring a scalable and maintainable codebase.
+### Backend & Services
 
-## Getting Started
+*   **Firebase Suite:** Leverages a comprehensive set of Firebase services:
+    *   **Authentication:** Securely manages user identities.
+    *   **Firestore:** The NoSQL database for storing user data, chat messages, and other application data.
+    *   **Firebase Storage:** Manages user-uploaded media like profile pictures.
+*   **Generative AI:** The `firebase_ai` package provides access to Google's Gemini model, with a dedicated service and screen for user interaction.
 
-To run the app, you need to have Flutter and Firebase configured in your development environment. Clone the repository, install the dependencies, and run the app on your preferred device or emulator.
+## Final Implementation Notes
+
+The development process involved several iterations of fixing and refactoring to ensure a stable and high-quality application. All initial bugs and linter warnings have been resolved, and the application is now in a clean, maintainable state. The `test` folder has been removed as the final step before concluding the project.

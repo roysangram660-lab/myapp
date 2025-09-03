@@ -25,24 +25,32 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
-              onPressed: () => context.go('/home/chat'),
+              onPressed: () => context.go('/chats'),
               child: const Text('Chat'),
             ),
             ElevatedButton(
-              onPressed: () => context.go('/home/video'),
+              onPressed: () => context.go('/community'),
+              child: const Text('Community Rooms'),
+            ),
+            ElevatedButton(
+              onPressed: () => context.go('/video'),
               child: const Text('Video Call'),
             ),
             ElevatedButton(
-              onPressed: () => context.go('/home/discover'),
+              onPressed: () => context.go('/discover'),
               child: const Text('Discover'),
             ),
             ElevatedButton(
-              onPressed: () => context.go('/home/issues'),
+              onPressed: () => context.go('/issues'),
               child: const Text('Issue Rooms'),
             ),
             ElevatedButton(
-              onPressed: () => context.go('/home/profile'),
+              onPressed: () => context.go('/profile'),
               child: const Text('Profile'),
+            ),
+            ElevatedButton(
+              onPressed: () => context.go('/gemini'),
+              child: const Text('Gemini AI'),
             ),
           ],
         ),

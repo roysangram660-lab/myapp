@@ -27,13 +27,13 @@ void main() async {
           initialData: null,
         ),
       ],
-      child: const UnityLinkApp(),
+      child: const MyApp(),
     ),
   );
 }
 
-class UnityLinkApp extends StatelessWidget {
-  const UnityLinkApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {

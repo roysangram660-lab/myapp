@@ -9,24 +9,20 @@ import 'package:myapp/screens/profile_screen.dart';
 import 'package:myapp/screens/discovery_screen.dart';
 import 'package:myapp/screens/issue_room_screen.dart';
 import 'package:myapp/screens/auth/auth_screen.dart';
-import 'package:myapp/screens/landing_screen.dart';
+import 'package:myapp/screens/gemini_screen.dart';
+import 'package:myapp/screens/community/community_rooms_screen.dart';
+import 'package:myapp/screens/community/new_community_room_screen.dart';
+import 'package:myapp/screens/community/community_room_screen.dart';
+import 'package:myapp/services/auth_service.dart';
+import 'package:myapp/utils/go_router_refresh_stream.dart';
+import 'package:provider/provider.dart';
 
-final GoRouter router = GoRouter(
+final router = GoRouter(
+  refreshListenable: GoRouterRefreshStream(AuthService().user),
+  initialLocation: '/auth',
   routes: <RouteBase>[
     GoRoute(
-      path: '/',
-      builder: (BuildContext context, GoRouterState state) {
-        return const LandingScreen();
-      },
-    ),
-    GoRoute(
-      path: '/auth',
-      builder: (BuildContext context, GoRouterState state) {
-        return const AuthScreen();
-      },
-    ),
-    GoRoute(
-        path: '/home',
+        path: '/',
         builder: (BuildContext context, GoRouterState state) {
           return const HomeScreen();
         },
@@ -48,6 +44,26 @@ final GoRouter router = GoRouter(
                   builder: (BuildContext context, GoRouterState state) {
                     final String chatRoomId = state.pathParameters['id']!;
                     return ChatScreen(chatRoomId: chatRoomId);
+                  },
+                ),
+              ]),
+          GoRoute(
+              path: 'community',
+              builder: (BuildContext context, GoRouterState state) {
+                return const CommunityRoomsScreen();
+              },
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'new',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const NewCommunityRoomScreen();
+                  },
+                ),
+                GoRoute(
+                  path: 'room/:id',
+                  builder: (BuildContext context, GoRouterState state) {
+                    final String roomId = state.pathParameters['id']!;
+                    return CommunityRoomScreen(roomId: roomId);
                   },
                 ),
               ]),
@@ -75,6 +91,33 @@ final GoRouter router = GoRouter(
               return const IssueRoomScreen();
             },
           ),
+          GoRoute(
+            path: 'gemini',
+            builder: (BuildContext context, GoRouterState state) {
+              return const GeminiScreen();
+            },
+          ),
         ]),
+    GoRoute(
+      path: '/auth',
+      builder: (BuildContext context, GoRouterState state) {
+        return const AuthScreen();
+      },
+    ),
   ],
+  redirect: (BuildContext context, GoRouterState state) {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final bool loggedIn = authService.currentUser != null;
+    final bool loggingIn = state.matchedLocation == '/auth';
+
+    if (!loggedIn) {
+      return '/auth';
+    }
+
+    if (loggingIn) {
+      return '/';
+    }
+
+    return null;
+  },
 );
