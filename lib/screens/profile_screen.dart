@@ -126,10 +126,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         }
 
                         await userService.updateUser(user.uid, updateData);
-                        if (!mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Profile updated!')),
-                        );
+                         if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Profile updated!')),
+                          );
+                        }
                       }
                     },
                     child: const Text('Update Profile'),

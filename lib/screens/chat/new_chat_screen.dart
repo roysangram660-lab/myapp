@@ -51,8 +51,9 @@ class _NewChatScreenState extends State<NewChatScreen> {
                 title: Text(user['displayName'] ?? 'User'),
                 onTap: () async {
                   final chatRoomId = await chatService.createChatRoom([currentUser.uid, user.id]);
-                  if (!mounted) return;
-                  context.go('/chats/$chatRoomId');
+                  if (mounted) {
+                    context.go('/chats/$chatRoomId');
+                  }
                 },
               );
             },
