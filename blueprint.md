@@ -1,42 +1,62 @@
-# UnityLink Blueprint
+# UnityLink Application Blueprint
 
-## Overview
+## 1. Overview
 
-This document outlines the architecture and features of UnityLink, a Flutter application designed for real-time communication and community engagement. The app is built with a focus on modern design, robust functionality, and a seamless user experience, all powered by Firebase and Google's Gemini AI.
+UnityLink is a modern, feature-rich chat application designed to connect users seamlessly. It leverages Firebase for its backend services, providing real-time communication, robust user authentication, and advanced AI-powered features. The application is built with Flutter, ensuring a beautiful, responsive, and cross-platform experience on both mobile and web.
 
-## Implemented Features & Design
+## 2. Core Features & Design
 
-### Core Architecture
+### Authentication
 
-*   **State Management:** Utilizes the `provider` package for robust state management and dependency injection, with `ChangeNotifier` for theme toggling and `StreamProvider` for real-time authentication state.
-*   **Navigation:** Employs `go_router` for declarative, URL-based navigation, complete with authentication-aware redirects to protect routes.
-*   **Services:** A modular service layer abstracts core functionalities:
-    *   `AuthService`: Handles all user authentication, including email/password and Google Sign-In.
-    *   `UserService`: Manages user data and profiles in Firestore.
-    *   `ChatService`: Powers the real-time chat functionality, including one-on-one chats and community rooms.
-    *   `GeminiService`: Integrates with the Gemini AI for intelligent features.
-*   **Error Handling:** Uses `dart:developer` for structured logging to enable effective debugging.
+*   **Email & Password:** Standard sign-up and sign-in.
+*   **Google Sign-In:** One-tap authentication using Google accounts.
+*   **Anonymous Sign-In:** Guest access for users to try the app.
+*   **Persistent Login:** Users remain logged in across app restarts.
 
-### User Interface & Experience
+### Real-time Chat
 
-*   **Theming:** A sophisticated theme system supports both light and dark modes, with custom typography from `google_fonts` and a polished, modern aesthetic.
-*   **Home Screen:** A central hub providing access to all major features: chats, calls, community rooms, user profiles, and the Gemini AI assistant.
-*   **Authentication Flow:** A seamless and secure authentication process with options for email/password and Google Sign-In.
-*   **Real-time Chat:** Users can engage in one-on-one conversations with other users, with a user list for initiating new chats.
-*   **Community Issue Rooms:** A new feature allowing users to create, join, and participate in topic-based discussion rooms.
-    *   **Room Directory:** A screen (`CommunityRoomsScreen`) that lists all available community rooms.
-    *   **Room Creation:** A dedicated screen (`NewCommunityRoomScreen`) for creating new rooms with a specified name.
-    *   **Real-time Chat:** A chat screen (`CommunityRoomScreen`) for real-time messaging within a specific room.
-*   **Profile Management:** A dedicated profile screen allows users to update their display name and profile picture, with image uploads handled by Firebase Storage.
+*   **One-on-One & Group Chats:** Users can create and participate in private and group conversations.
+*   **Real-time Messaging:** Messages are sent and received instantly, powered by Firestore.
+*   **Video Calls:** Integrated Jitsi Meet SDK for high-quality video conferencing.
+*   **Message Reactions & Deletion:** Interactive message options.
 
-### Backend & Services
+### User Profiles
 
-*   **Firebase Suite:** Leverages a comprehensive set of Firebase services:
-    *   **Authentication:** Securely manages user identities.
-    *   **Firestore:** The NoSQL database for storing user data, chat messages, and other application data.
-    *   **Firebase Storage:** Manages user-uploaded media like profile pictures.
-*   **Generative AI:** The `firebase_ai` package provides access to Google's Gemini model, with a dedicated service and screen for user interaction.
+*   **Customizable Profiles:** Users can set a display name and a profile picture.
+*   **Profile Picture Management:** Upload images from the device gallery.
 
-## Final Implementation Notes
+### AI-Powered Features (Gemini)
 
-The development process involved several iterations of fixing and refactoring to ensure a stable and high-quality application. All initial bugs and linter warnings have been resolved, and the application is now in a clean, maintainable state. The `test` folder has been removed as the final step before concluding the project.
+*   **Image Analysis:** Users can have their profile pictures analyzed by Google's Gemini model, which provides a creative and fun description of the image.
+
+### Design & UI/UX
+
+*   **Material 3 Design:** The app uses the latest Material Design guidelines for a modern and intuitive UI.
+*   **Light & Dark Themes:** A theme provider allows users to switch between light and dark modes.
+*   **Custom Fonts:** `google_fonts` is used for a unique and expressive typographical style.
+*   **Responsive Layout:** The UI is designed to adapt gracefully to different screen sizes.
+
+## 3. Current Implementation Plan
+
+**Objective:** Implement and integrate a multimodal AI feature for analyzing user profile pictures.
+
+**Status:** **Completed**
+
+**Steps Taken:**
+
+1.  **`StorageService` Creation:**
+    *   Created `lib/services/storage_service.dart` to manage image uploads to Firebase Storage and retrieve their `gs://` URIs.
+
+2.  **`GeminiService` Enhancement:**
+    *   Updated `lib/services/gemini_service.dart` with an `analyzeImage` method that takes a prompt and a `gs://` image URI.
+    *   This method uses the `gemini-1.5-flash` model to perform multimodal analysis.
+
+3.  **`ProfileScreen` Integration:**
+    *   Modified `lib/screens/profile_screen.dart` to integrate the new services.
+    *   Added an "Analyze Profile Picture" button.
+    *   Implemented the logic to upload the image, retrieve its URI, call the analysis service, and display the result in a dialog.
+
+4.  **Dependency & Provider Setup:**
+    *   Verified all necessary dependencies (`firebase_ai`, `firebase_storage`, `image_picker`) are in `pubspec.yaml`.
+    *   Ran `flutter pub get` to ensure dependencies are fetched.
+    *   Updated `lib/main.dart` to provide the `StorageService` and `GeminiService` to the application via `MultiProvider`.

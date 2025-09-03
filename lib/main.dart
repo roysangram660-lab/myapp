@@ -8,6 +8,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:myapp/services/auth_service.dart';
 import 'package:myapp/services/user_service.dart';
 import 'package:myapp/services/chat_service.dart';
+import 'package:myapp/services/storage_service.dart';
+import 'package:myapp/services/gemini_service.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -22,6 +24,8 @@ void main() async {
         Provider<AuthService>(create: (_) => AuthService()),
         Provider<UserService>(create: (_) => UserService()),
         Provider<ChatService>(create: (_) => ChatService()),
+        Provider<StorageService>(create: (_) => StorageService()),
+        Provider<GeminiService>(create: (_) => GeminiService()),
         StreamProvider<User?>(
           create: (context) => context.read<AuthService>().user,
           initialData: null,

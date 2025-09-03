@@ -68,7 +68,7 @@ class AuthService {
   Future<User?> signInAnonymously() async {
     try {
       UserCredential result = await _auth.signInAnonymously();
-       User? user = result.user;
+      User? user = result.user;
       if (user != null) {
         await _userService.createUser(user);
       }
